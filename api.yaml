@@ -1,0 +1,198 @@
+openapi: 3.0.3
+info:
+  title: API para consultar el stock de productos de la base de datos de Bsale
+  description: |-
+    Esta es la documentación de la interfaz de aplicaciín para obtener el stock de la base de datos
+    Bsale test.
+  version: 1.0.0
+
+servers:
+- url: http://localhost:3000/api
+
+tags:
+- name: Products
+  description: Endpoint para consultar los productos de la base datos, así como para buscar productos por nombre.
+- name: Categories
+  description: Endpoint para obtener todas las categorías de productos.
+- name: Category
+  description: Endpoint para realizar filtrado y búsqueda de artículos por categoría.
+
+paths:
+  /products:
+    get:
+      tags: 
+      - Products
+      summary: Devuelve todos los productos.
+      description: Consulta de todo el stock de productos en la base de datos.
+      responses: 
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductsResponse'
+        '500':
+          description: Error en el servidor.
+  
+  /products/{productName}:
+    get:
+      tags: 
+      - Products
+      summary: Busca productos por nombre.
+      description: Consulta de todos los productos que contengan la búsqueda.
+      parameters:
+        - name: productName
+          in: path
+          required: true
+          description: Texto que debe contener el producto que se está buscando.
+          schema:
+            type : string
+      responses: 
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ProductsResponse' 
+        '204':
+          description: No se encontró ningún producto que contenga la búsqueda.
+        '500':
+          description: Error en el servidor.
+
+  /categories:
+    get:
+      tags: 
+      - Categories
+      summary: Devuelve todas las categorías.
+      description: Consulta de todas las categorías de productos.
+      responses: 
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriesResponse'
+        '500':
+          description: Error en el servidor.
+
+  /category/{category}:
+    get:
+      tags: 
+      - Category
+      summary: Busca productos por categoría.
+      description: Consulta de todos los productos que contengan la búsqueda.
+      parameters:
+        - name: category
+          in: path
+          required: true
+          description: Identificador de la categoría por la que se desean filtrar los productos.
+          schema:
+            type : integer
+            format: int32
+      responses: 
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ProductsResponse' 
+        '204':
+          description: No se encontró ningún producto o categoría.
+        '500':
+          description: Error en el servidor.
+
+  /category/{category}/{productName}:
+    get:
+      tags: 
+      - Category
+      summary: Busca productos por categoría.
+      description: Consulta de todos los productos que contengan la búsqueda.
+      parameters:
+        - name: category
+          in: path
+          required: true
+          description: Identificador de la categoría por la que se desean filtrar los productos.
+          schema:
+            type : integer
+            format: int32
+        - name: productName
+          in: path
+          required: true
+          description: Texto que debe contener el producto que se está buscando.
+          schema:
+            type : string
+      responses: 
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ProductsResponse' 
+        '204':
+          description: No se encontró ningún producto o categoría.
+        '500':
+          description: Error en el servidor.
+
+components:
+  schemas:
+    ProductsResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Products obtained.
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          example: 48
+        name:
+          type: string
+          example: "SPRITE 1 1/2 Lts"
+        url_image:
+          type: string
+          example: "https://dojiw2m9tvv09.cloudfront.net/11132/product/sprite-lata-33cl5575.jpg"
+        price:
+          type: number
+          format: float
+          example: 1500
+        discount:
+          type: integer
+          example: 0
+        category:
+          type: integer
+          example: 4
+        category_name:
+          type: string
+          example: bebida
+
+    CategoriesResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Categories Obteined.
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          example: 2
+        name: 
+          type: string
+          example: pisco
+          description: Nombre de la categoría.
