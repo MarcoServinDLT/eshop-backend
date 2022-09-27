@@ -16,7 +16,7 @@ const apiRoutes = require('./routes/routes')
 
 // keep alive db connection //
 setInterval( () => { db.query("SELECT 1") },
-    5000
+    3000
 )
 
 // Allow request. //
